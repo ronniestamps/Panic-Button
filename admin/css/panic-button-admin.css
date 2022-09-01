@@ -1,0 +1,26 @@
+/**
+ * All of the CSS for your admin-specific functionality should be
+ * included in this file.
+ */
+
+.regular-text {
+    width: 40% !important;
+}
+
+.plugin-thumbnail {
+	width: 10%;
+}
+
+.subtext {
+    font-weight: normal;
+    font-size: smaller;
+}
+
+.subheading {
+	font-size: medium;
+}
+
+#panic-button-form h2 {
+    margin-bottom: 10px;
+	font-size: 2em;
+}
