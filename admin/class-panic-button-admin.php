@@ -60,7 +60,7 @@ class Panic_Button_Admin {
 	
 	public function color_picker() {
 		wp_enqueue_style( 'wp-color-picker' );
-		wp_enqueue_script( 'wp-color-picker-alpha', plugin_dir_url( __FILE__ ).'/js/wp-color-picker-alpha.js', array( 'wp-color-picker' ), false, false );
+		wp_enqueue_script( 'wp-color-picker-alpha', plugin_dir_url( __FILE__ ).'/js/wp-color-picker-alpha.js', array( 'wp-color-picker' ), false, true );
 
 	}
 	
@@ -77,11 +77,11 @@ class Panic_Button_Admin {
 			array( $this, 'panic_button_settings_functionality_info' ), // callback
 			'panic-button-settings-admin' // page
 		);
-		
+
 		add_settings_field(
-			'use_keyboard_0', // id
-			'Use Keyboard as trigger<br><span class="subtext">Pressing 3 or more keys at the same time triggers the escape routine.</span>', // title
-			array( $this, 'use_keyboard_0_callback' ), // callback
+			'escape_method', // id
+			'Choose escape method. Use Keyboard as trigger<br><span class="subtext">Pressing 3 or more keys at the same time triggers the escape routine. Use Standard Panic Button as trigger. A graphical element as a button for the user to click on to trigger the escape routine.</span>', // title
+			array( $this, 'escape_method_callback' ), // callback
 			'panic-button-settings-admin', // page
 			'panic_button_settings_setting_section' // section
 		);
@@ -90,14 +90,6 @@ class Panic_Button_Admin {
 			'time_out_5', // id
               'Keyboard sensitivity <br><span class="subtext">Fine tune in milliseconds. Use this setting to reduce false triggers due to extremely fast typing. This is usually only needed if you have pages where the user needs to enter text.</span>', // title
 			array( $this, 'time_out_5_callback' ), // callback
-			'panic-button-settings-admin', // page
-			'panic_button_settings_setting_section' // section
-		);
-
-		add_settings_field(
-			'standard_button_1', // id
-			'Use Standard Panic Button<br><span class="subtext">A graphical element as a button for the user to click on to trigger the escape routine.</span>', // title
-			array( $this, 'standard_button_1_callback' ), // callback
 			'panic-button-settings-admin', // page
 			'panic_button_settings_setting_section' // section
 		);
@@ -122,14 +114,6 @@ class Panic_Button_Admin {
 			'address_bar_replacement_url_6', // id
 			'Address bar replacement (URL)', // title
 			array( $this, 'address_bar_replacement_url_6_callback' ), // callback
-			'panic-button-settings-admin', // page
-			'panic_button_settings_setting_section' // section
-		);
-
-		add_settings_field(
-			'new_website_to_open_url_7', // id
-			'New website to open (URL)', // title
-			array( $this, 'new_website_to_open_url_7_callback' ), // callback
 			'panic-button-settings-admin', // page
 			'panic_button_settings_setting_section' // section
 		);
@@ -222,12 +206,8 @@ class Panic_Button_Admin {
 	
 	public function panic_button_settings_sanitize($input) {
 		$sanitary_values = array();
-		if ( isset( $input['use_keyboard_0'] ) ) {
-			$sanitary_values['use_keyboard_0'] = $input['use_keyboard_0'];
-		}
-
-		if ( isset( $input['standard_button_1'] ) ) {
-			$sanitary_values['standard_button_1'] = $input['standard_button_1'];
+		if ( isset( $input['escape_method'] ) ) {
+			$sanitary_values['escape_method'] = $input['escape_method'];
 		}
 
 		if ( isset( $input['display_modal_on_page_2'] ) ) {
@@ -244,10 +224,6 @@ class Panic_Button_Admin {
 
 		if ( isset( $input['address_bar_replacement_url_6'] ) ) {
 			$sanitary_values['address_bar_replacement_url_6'] = sanitize_text_field( $input['address_bar_replacement_url_6'] );
-		}
-
-		if ( isset( $input['new_website_to_open_url_7'] ) ) {
-			$sanitary_values['new_website_to_open_url_7'] = sanitize_text_field( $input['new_website_to_open_url_7'] );
 		}
 				
 		if ( isset( $input['modal_image_1'] ) ) {
@@ -274,29 +250,26 @@ class Panic_Button_Admin {
 			$sanitary_values['standard_button_bg_hover_1'] = $input['standard_button_bg_hover_1'];
 		}
 
-
-		
 		return $sanitary_values;
 	}
 	
-	
-	public function use_keyboard_0_callback() {
-		printf(
-			'<input type="checkbox" name="panic_button_settings_option_name[use_keyboard_0]" id="use_keyboard_0" value="use_keyboard_0" %s>',
-			( isset( $this->panic_button_settings_options['use_keyboard_0'] ) && $this->panic_button_settings_options['use_keyboard_0'] === 'use_keyboard_0' ) ? 'checked' : ''
-		);
-	}
+	public function escape_method_callback() { ?>
 
-	public function standard_button_1_callback() {
-		printf(
-			'<input type="checkbox" name="panic_button_settings_option_name[standard_button_1]" id="standard_button_1" value="standard_button_1" %s>',
-			( isset( $this->panic_button_settings_options['standard_button_1'] ) && $this->panic_button_settings_options['standard_button_1'] === 'standard_button_1' ) ? 'checked' : ''
-		);
+		<select id="escape_method" name="panic_button_settings_option_name[escape_method]">
+			<?php $selected = (isset( $this->panic_button_settings_options['escape_method'] ) && $this->panic_button_settings_options['escape_method'] === 'all') ? 'selected' : '' ; ?>
+			<option <?php echo $selected; ?> value="all">All Escape Methods</option>
+			<?php $selected = (isset( $this->panic_button_settings_options['escape_method'] ) && $this->panic_button_settings_options['escape_method'] === 'keyboard') ? 'selected' : '' ; ?>
+			<option <?php echo $selected; ?> value="keyboard">Keyboard Only</option>
+			<?php $selected = (isset( $this->panic_button_settings_options['escape_method'] ) && $this->panic_button_settings_options['escape_method'] === 'button') ? 'selected' : '' ; ?>
+			<option <?php echo $selected; ?> value="button">Button Only</option>
+		</select>		
+	
+	<?php
 	}
 
 	public function display_modal_on_page_2_callback() {
 		printf(
-			'<input type="checkbox" name="panic_button_settings_option_name[display_modal_on_page_2]" id="display_modal_on_page_2" value="display_modal_on_page_2" %s>',
+			'<input type="checkbox" name="panic_button_settings_option_name[display_modal_on_page_2]" id="display_modal_on_page_2" value="display_modal_on_page_2">',
 			( isset( $this->panic_button_settings_options['display_modal_on_page_2'] ) && $this->panic_button_settings_options['display_modal_on_page_2'] === 'display_modal_on_page_2' ) ? 'checked' : ''
 		);
 	}
@@ -310,7 +283,7 @@ class Panic_Button_Admin {
 
 	public function time_out_5_callback() {
 		printf(
-			'<input class="regular-text" type="text" name="panic_button_settings_option_name[time_out_5]" id="time_out_5" value="%s" maxlength="4" size="5">',
+			'<input class="regular-text" type="range" min="0" max="2000" name="panic_button_settings_option_name[time_out_5]" id="time_out_5" value="500" oninput="range_weight_disp.value = time_out_5.value"><output  id="range_weight_disp"></output>',
 			isset( $this->panic_button_settings_options['time_out_5'] ) ? esc_attr( $this->panic_button_settings_options['time_out_5']) : ''
 		);
 	}
@@ -319,13 +292,6 @@ class Panic_Button_Admin {
 		printf(
 			'<input class="regular-text" type="text" name="panic_button_settings_option_name[address_bar_replacement_url_6]" id="address_bar_replacement_url_6" value="%s">',
 			isset( $this->panic_button_settings_options['address_bar_replacement_url_6'] ) ? esc_attr( $this->panic_button_settings_options['address_bar_replacement_url_6']) : ''
-		);
-	}
-
-	public function new_website_to_open_url_7_callback() {
-		printf(
-			'<input class="regular-text" type="text" name="panic_button_settings_option_name[new_website_to_open_url_7]" id="new_website_to_open_url_7" value="%s">',
-			isset( $this->panic_button_settings_options['new_website_to_open_url_7'] ) ? esc_attr( $this->panic_button_settings_options['new_website_to_open_url_7']) : ''
 		);
 	}
 	
@@ -411,7 +377,7 @@ class Panic_Button_Admin {
 	</script><?php
 
 }
-	
+
 	public function button_position_8_callback() {
 		?> <select name="panic_button_settings_option_name[button_position_8]" id="button_position_8">
 			<?php $selected = (isset( $this->panic_button_settings_options['button_position_8'] ) && $this->panic_button_settings_options['button_position_8'] === 'Top') ? 'selected' : '' ; ?>

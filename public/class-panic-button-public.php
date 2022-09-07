@@ -40,15 +40,44 @@ class Panic_Button_Public {
 	 */
 	private $version;
 
+    /**
+	 * Panic Button head settings.
+	 *
+	 * @since    1.0.0
+	 * @access   protected
+	 * 
+	 */
+    protected $panic_button_settings_options;
+    protected $escape_method;
+    protected $pos;
+    protected $time;
+    protected $add_url;
+    protected $bar_text_color;
+    protected $bar_bg_hover;
+
+    
+    /**
+	 * Panic Button footer settings.
+	 *
+	 * @since    1.0.0
+	 * @access   protected
+	 * 
+	 */
+    protected $instructions;
+    protected $modal;
+    protected $image;
+    protected $bar_bg;
+    protected $bar_text;
+
+
 	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
-	 * @param      string    $panic_button       The name of the plugin.
-	 * @param      string    $version    The version of this plugin.
+	 * @param      string    $panic_button  The name of this plugin.
+	 * @param      string    $version   The version of this plugin.
 	 */
-	
-	protected $panic_button_settings_options;
+
 	
 	public function __construct( $panic_button, $version ) {
 
@@ -57,8 +86,9 @@ class Panic_Button_Public {
 		
 		// Hostwel
 		$this->panic_button_settings_options = get_option( 'panic_button_settings_option_name' );
-		add_action( 'wp_footer', array($this,'panic_footer'));
         add_action( 'wp_head', array($this,'panic_head_tag'));
+		add_action( 'wp_footer', array($this,'panic_footer'));
+        add_action('wp_footer', array($this,'cover_tracks'));
 
 	}
 
@@ -116,102 +146,61 @@ class Panic_Button_Public {
 
 	}
 	
-	public function panic_footer() {
 
-        $load_footer = $this->panic_button_settings_options['standard_button_1'];        
-		$instructions = $this->panic_button_settings_options['instructions_3'];        
-		$modal = $this->panic_button_settings_options['display_modal_on_page_2'];        
-		$image = $this->panic_button_settings_options['modal_image_1'] != '' ? $this->panic_button_settings_options['modal_image_1'] : plugin_dir_url( __FILE__ ).'img/panic-button.gif';		
-		$bar_bg = $this->panic_button_settings_options['standard_button_bg_1'];		
-		$bar_text = $this->panic_button_settings_options['standard_button_text_1'];
-		$bar_text_color = $this->panic_button_settings_options['standard_button_text_color_1'];
-		$bar_bg_hover = $this->panic_button_settings_options['standard_button_bg_hover_1'];
-		$bar_text_hover = $this->panic_button_settings_options['standard_button_text_hover_1'];
-
-        if(isset($load_footer))
-        {
-            echo '<div id="panic" onclick="navigate();"><div id="panicLeft">'.$bar_text.'</div><div id="panicRight">'.$bar_text.'</div></div>';
-        } 
-
-        if(isset($modal))  
-        {  
-            ?>
-            <a class="popup" href="#follow-form">Click</a>
-            <div id="follow-form" class="white-popup-block mfp-hide" style="background: #FFF;padding: 20px 30px;text-align: left;max-width: 650px;margin: 40px auto;overflow:hidden">
-                <?php print $instructions ; ?>
-                <div>
-                    <img src="<?php print $image ?>" />
-                </div>
-                <div>
-                    <button id="ack">Got It!</button>
-                </div>
-            </div>
-            <script>
-            jQuery(document).ready(function () {
-            setTimeout(function() {
-             if (jQuery('#follow-form').length) {
-               jQuery.magnificPopup.open({
-                items: {
-                    src: '#follow-form' 
-                },
-                type: 'inline',
-                closeOnBgClick: false,
-                closeMarkup: '<button title="%title%" class="mfp-close" style="display:none">Close</button>', 
-                  });
-               }
-             }, 1000);
-            });
-
-            jQuery('#ack').click(function(){
-                //This will close popup dialog opened using $.magnificPopup.open()
-                jQuery.magnificPopup.close();
-            });
-            </script>
-            <?php
-        }
+    /**
+	 * Converts all links to use Javascript replace() so that links 
+     * are not added to browser history.
+	 *
+	 * @since    1.0.0
+	 */
+    public function cover_tracks() {
+    ?>
+        <script>
+            window.onload = function() {
+                let anchors = document.getElementsByTagName("a");
+                    for (var i = 0; i < anchors.length; i++) {
+                        anchors[i].setAttribute("data-link", anchors[i].href);
+                        anchors[i].setAttribute("href", "javascript:void(0);");
+                        let link = anchors[i].getAttribute("data-link");
+                        anchors[i].setAttribute("onclick", 'window.location.replace("'+link+'");');
+                    }
+        };
+        </script>
+    <?php
     }
-	
-	
+
 	public function panic_head_tag() {
 		
-        $load_footer = $this->panic_button_settings_options['standard_button_1'];
-        $keyboard = $this->panic_button_settings_options['use_keyboard_0'];
+        $escape_method = $this->panic_button_settings_options['escape_method'];
         $pos = $this->panic_button_settings_options['button_position_8'];
-        $time = $this->panic_button_settings_options['time_out_5'] != '' ? $this->panic_button_settings_options['time_out_5'] : 200;
+        $time = $this->panic_button_settings_options['time_out_5'];
         $add_url = $this->panic_button_settings_options['address_bar_replacement_url_6'];
-        $web_url = $this->panic_button_settings_options['new_website_to_open_url_7'];
 		$bar_bg = $this->panic_button_settings_options['standard_button_bg_1'];
 		$bar_text = $this->panic_button_settings_options['standard_button_text_1'];
 		$bar_text_color = $this->panic_button_settings_options['standard_button_text_color_1'];
 		$bar_bg_hover = $this->panic_button_settings_options['standard_button_bg_hover_1'];
-		$bar_text_hover = $this->panic_button_settings_options['standard_button_text_hover_1'];
 		
         if (strpos($add_url,'http://') === false){
             $add_url = 'http://'.$add_url;
         }
-        if (strpos($web_url,'http://') === false){
-            $web_url = 'http://'.$web_url;
-        }
+
         ?>
-        <script>
-        function navigate(){
-			window.close();
-            window.location.replace('<?php print $add_url ?>'); /* OPTION TO ADD URL - "Address bar replacement" */
-            window.open("<?php print $web_url ?>"); /* OPTION TO ADD URL - "New website to open" */
-            return false;
-        }
-        </script>
+            <script>
+            function navigate(){
+                    window.location.replace('<?php print $add_url ?>'); /* OPTION TO ADD URL - "Address bar replacement" */
+                return false;
+            }
+            </script>
         <?php
-        if(isset($keyboard))
+        if($escape_method == "keyboard" || $escape_method == "all")
         {
             ?>
             <script type="text/javascript">
-            window.onload = function(){
-              var a = [];
+              let a = [];
               document.body.onkeydown = function(event){
-                      setTimeout(clearArray, <?php print $time ?>); /* OPTION TO CHANGE TIMEOUT - "Fine tune reaction time" */
-                var keyCode = ('which' in event) ? event.which : event.keyCode;
-                if (a.indexOf(keyCode) == -1) a.push(keyCode);
+                    setTimeout(clearArray, <?php print $time; ?>); /* OPTION TO CHANGE TIMEOUT - "Fine tune reaction time" */
+                    let keyCode = ('which' in event) ? event.which : event.keyCode;
+                    if (a.indexOf(keyCode) == -1) a.push(keyCode);
                     if (a.length <= 2) return;
                 
                     function clearArray() {
@@ -224,8 +213,6 @@ class Panic_Button_Public {
 					}
                 return false;
               };  
-
-            }; 
             </script>
             <?php
         }
@@ -358,6 +345,58 @@ class Panic_Button_Public {
         <?php
         }    
     }
-	
 
+	public function panic_footer() {
+
+        $escape_method = $this->panic_button_settings_options['escape_method'];      
+		$instructions = $this->panic_button_settings_options['instructions_3'];        
+		$modal = $this->panic_button_settings_options['display_modal_on_page_2'];        
+		$image = $this->panic_button_settings_options['modal_image_1'] != '' ? $this->panic_button_settings_options['modal_image_1'] : plugin_dir_url( __FILE__ ).'img/panic-button.gif';		
+		$bar_bg = $this->panic_button_settings_options['standard_button_bg_1'];		
+		$bar_text = $this->panic_button_settings_options['standard_button_text_1'];
+		$bar_text_color = $this->panic_button_settings_options['standard_button_text_color_1'];
+		$bar_bg_hover = $this->panic_button_settings_options['standard_button_bg_hover_1'];
+
+        if(isset($escape_method) && ($escape_method == "button" || $escape_method == "all"))
+        {
+            echo '<div id="panic" onclick="navigate();"><div id="panicLeft">'.$bar_text.'</div><div id="panicRight">'.$bar_text.'</div></div>';
+        } 
+
+        if(isset($modal))  
+        {  
+            ?>
+            <a class="popup" href="#follow-form">Click</a>
+            <div id="follow-form" class="white-popup-block mfp-hide" style="background: #FFF;padding: 20px 30px;text-align: left;max-width: 650px;margin: 40px auto;overflow:hidden">
+                <?php print $instructions ; ?>
+                <div>
+                    <img src="<?php print $image ?>" />
+                </div>
+                <div>
+                    <button id="ack">Got It!</button>
+                </div>
+            </div>
+            <script>
+            jQuery(document).ready(function () {
+            setTimeout(function() {
+             if (jQuery('#follow-form').length) {
+               jQuery.magnificPopup.open({
+                items: {
+                    src: '#follow-form' 
+                },
+                type: 'inline',
+                closeOnBgClick: false,
+                closeMarkup: '<button title="%title%" class="mfp-close" style="display:none">Close</button>', 
+                  });
+               }
+             }, 1000);
+            });
+
+            jQuery('#ack').click(function(){
+                //This will close popup dialog opened using $.magnificPopup.open()
+                jQuery.magnificPopup.close();
+            });
+            </script>
+            <?php
+        }
+    }
 }

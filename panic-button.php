@@ -15,7 +15,7 @@
  * @wordpress-plugin
  * Plugin Name:       Panic Button
  * Plugin URI:        https://ronniestamps.com/panic-button
- * Description:       This plugin offers a layer of protection and annonimity for users of DV/SV websites.
+ * Description:       This plugin offers a layer of protection and annonimity for users of Domestic Violence (DV) and Sexual Violence (SV) websites.
  * Version:           1.0.0
  * Author:            Ronnie Stamps
  * Author URI:        https://ronniestamps.com
@@ -35,7 +35,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'PANIC_BUTTON', '1.0.0' );
+define( 'PANIC_BUTTON_VERSION', '1.0.0' );
 
 /**
  * The code that runs during plugin activation.
