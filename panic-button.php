@@ -1,6 +1,18 @@
 <?php
 
 /**
+ * Panic Button SESSION variables.
+ * Start SESSION so that certain functionality only occurs once per visit.
+ * @since    1.0.0
+ * SESSION variables: modal
+ */
+session_start();
+
+if( ! isset($_SESSION["modal"])) {
+	$_SESSION["modal"] = 0;
+}
+
+/**
  * The plugin bootstrap file
  *
  * This file is read by WordPress to generate the plugin information in the plugin
@@ -8,17 +20,17 @@
  * registers the activation and deactivation functions, and defines a function
  * that starts the plugin.
  *
- * @link              https://ronniestamps.com/panic-button
+ * @link              https://nkdcon.com/plugins/panic-button
  * @since             1.0.0
  * @package           Panic_Button
  *
  * @wordpress-plugin
  * Plugin Name:       Panic Button
- * Plugin URI:        https://ronniestamps.com/panic-button
+ * Plugin URI:        https://nkdcon.com/plugins/panic-button
  * Description:       This plugin offers a layer of protection and annonimity for users of Domestic Violence (DV) and Sexual Violence (SV) websites.
  * Version:           1.0.0
- * Author:            Ronnie Stamps
- * Author URI:        https://ronniestamps.com
+ * Author:            Naked Consulting
+ * Author URI:        https://nkdcon.com
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       panic-button

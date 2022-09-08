@@ -3,7 +3,7 @@
 /**
  * The admin-specific functionality of the plugin.
  *
- * @link       http://hostwel.net
+ * @link       https://nkdcon.com/plugins/panic-button
  * @since      1.0.0
  *
  * @package    Panic_Button
@@ -18,11 +18,11 @@
  *
  * @package    Panic_Button
  * @subpackage Panic_Button/admin
- * @author     Ronnie Stamps <ronnie@hostwel.net>
+ * @author     Ronnie Stamps <ronnie@nkdcon.com>
  */
 class Panic_Button_Admin {
 	
-	protected $panic_button_settings_options;
+	protected $panic_button_configuration_options;
 	protected $panic_button = 'panic_button'; // Plugin ID
     protected $_plugin_dir; // Plugin directory
     protected $_plugin_url; // Plugin URL
@@ -33,28 +33,23 @@ class Panic_Button_Admin {
 
 		$this->panic_button = $panic_button;
 		$this->version = $version;
-		
-		/// Hostwel
-		add_action( 'admin_menu', array( $this, 'panic_button_settings_add_plugin_page' ) );
-		add_action( 'admin_init', array( $this, 'panic_button_settings_page_init' ) );
+
 		$this->_plugin_dir = dirname(__FILE__);
-        $this->_plugin_url = plugin_dir_url( __FILE__ ); //get_site_url(null, 'wp-content/plugins/' . basename($this->_plugin_dir));
+        $this->_plugin_url = plugin_dir_url( __FILE__ );
 		
+		add_action( 'admin_menu', array( $this, 'panic_button_configuration_add_plugin_page' ) );
+		add_action( 'admin_init', array( $this, 'panic_button_configuration_page_init' ) );
 		add_action( 'admin_footer', array( $this, 'media_selector_print_scripts' ) );
-		
 		
 	}
 	
-	
-	// Hostwel
-	
-	public function panic_button_settings_add_plugin_page() {
+	public function panic_button_configuration_add_plugin_page() {
 		add_options_page(
-			'Panic Button Settings', // page_title
-			'Panic Button Settings', // menu_title
+			'Panic Button Configuration', // page_title
+			'Panic Button Configuration', // menu_title
 			'manage_options', // capability
-			'panic-button-settings', // menu_slug
-			array( $this, 'panic_button_settings_create_admin_page' ) // function
+			'panic-button-configuration', // menu_slug
+			array( $this, 'panic_button_configuration_create_admin_page' ) // function
 		);
 	}
 	
@@ -64,154 +59,245 @@ class Panic_Button_Admin {
 
 	}
 	
-	public function panic_button_settings_page_init() {
+	public function panic_button_configuration_page_init() {
 		register_setting(
-			'panic_button_settings_option_group', // option_group
-			'panic_button_settings_option_name', // option_name
-			array( $this, 'panic_button_settings_sanitize' ) // sanitize_callback
+			'panic_button_configuration_option_group', // option_group
+			'panic_button_configuration_option_name', // option_name
+			array( $this, 'panic_button_configuration_sanitize' ), // sanitize_callback
 		);
 
+		register_setting(
+			'panic_button_style_option_group', // option_group
+			'panic_button_configuration_option_name', // option_name
+			array( $this, 'panic_button_configuration_sanitize' ) // sanitize_callback
+		);
+
+		$defaults = array(
+			'escape_method' => 'all',
+			'button_position_8' => 'bottom',
+			'time_out_5' => 500,
+			'address_bar_replacement_url_6' => 'https://www.google.com',
+			'standard_button_bg_1' => '#000000',
+			'standard_button_text_color_1' => '#ffffff',
+			'standard_button_bg_hover_1' => '#333333',
+			'instructions_3' => 'User instructions.',
+			'display_instructions' => 'modal',
+			'modal_image_1' => plugin_dir_url( __FILE__ ).'img/panic-button.gif',
+			'standard_button_text_1' => 'EXIT!'
+		);
+		
+		if (!isset($this->panic_button_configuration_options)) {
+			$this->panic_button_configuration_options = add_option('panic_button_configuration_option_name', $defaults);
+		}
+
 		add_settings_section(
-			'panic_button_settings_setting_section', // id
+			'panic_button_configuration_setting_section', // id
 			'<hr>Functionality', // title
-			array( $this, 'panic_button_settings_functionality_info' ), // callback
-			'panic-button-settings-admin' // page
+			array( $this, 'panic_button_configuration_functionality_info' ), // callback
+			'panic-button-configuration-admin' // page
 		);
 
 		add_settings_field(
 			'escape_method', // id
 			'Choose escape method. Use Keyboard as trigger<br><span class="subtext">Pressing 3 or more keys at the same time triggers the escape routine. Use Standard Panic Button as trigger. A graphical element as a button for the user to click on to trigger the escape routine.</span>', // title
 			array( $this, 'escape_method_callback' ), // callback
-			'panic-button-settings-admin', // page
-			'panic_button_settings_setting_section' // section
+			'panic-button-configuration-admin', // page
+			'panic_button_configuration_setting_section' // section
 		);
 		
 		add_settings_field(
 			'time_out_5', // id
               'Keyboard sensitivity <br><span class="subtext">Fine tune in milliseconds. Use this setting to reduce false triggers due to extremely fast typing. This is usually only needed if you have pages where the user needs to enter text.</span>', // title
 			array( $this, 'time_out_5_callback' ), // callback
-			'panic-button-settings-admin', // page
-			'panic_button_settings_setting_section' // section
+			'panic-button-configuration-admin', // page
+			'panic_button_configuration_setting_section' // section
 		);
 
 		add_settings_field(
-			'display_modal_on_page_2', // id
-			'Display instructions in a Modal', // title
-			array( $this, 'display_modal_on_page_2_callback' ), // callback
-			'panic-button-settings-admin', // page
-			'panic_button_settings_setting_section' // section
+			'display_instructions', // id
+			'Display instructions as a Browser Alert or in a Modal', // title
+			array( $this, 'display_instructions_callback' ), // callback
+			'panic-button-configuration-admin', // page
+			'panic_button_configuration_setting_section' // section
 		);
 
 		add_settings_field(
 			'instructions_3', // id
-			'Modal instructions', // title
+			'Instructions to users', // title
 			array( $this, 'instructions_3_callback' ), // callback
-			'panic-button-settings-admin', // page
-			'panic_button_settings_setting_section' // section
+			'panic-button-configuration-admin', // page
+			'panic_button_configuration_setting_section' // section
 		);
 
 		add_settings_field(
 			'address_bar_replacement_url_6', // id
 			'Address bar replacement (URL)', // title
 			array( $this, 'address_bar_replacement_url_6_callback' ), // callback
-			'panic-button-settings-admin', // page
-			'panic_button_settings_setting_section' // section
+			'panic-button-configuration-admin', // page
+			'panic_button_configuration_setting_section' // section
 		);
 		
 		add_settings_section(
-			'panic_button_settings_style_section', // id
+			'panic_button_configuration_style_section', // id
 			'<hr>Style', // title
-			array( $this, 'panic_button_settings_style_info' ), // callback
-			'panic-button-settings-admin' // page
+			array( $this, 'panic_button_configuration_style_info' ), // callback
+			'panic-button-style-admin' // page
 		);
 		
 		add_settings_field(
 			'modal_image_1', // id
 			'Modal Image', // title
 			array( $this, 'modal_image_1_callback' ), // callback
-			'panic-button-settings-admin', // page
-			'panic_button_settings_style_section' // section
+			'panic-button-style-admin', // page
+			'panic_button_configuration_style_section' // section
 		);
 			
 		add_settings_field(
 			'button_position_8', // id
 			'Panic Button Position', // title
 			array( $this, 'button_position_8_callback' ), // callback
-			'panic-button-settings-admin', // page
-			'panic_button_settings_style_section' // section
+			'panic-button-style-admin', // page
+			'panic_button_configuration_style_section' // section
 		);
 		
 		add_settings_field(
 			'standard_button_text_1', // id
 			'Panic Button Text', // title
 			array( $this, 'standard_button_text_1_callback' ), // callback
-			'panic-button-settings-admin', // page
-			'panic_button_settings_style_section' // section
+			'panic-button-style-admin', // page
+			'panic_button_configuration_style_section' // section
 		);
 		
 		add_settings_field(
 			'standard_button_text_color_1', // id
 			'Panic Button Text color', // title
 			array( $this, 'standard_button_text_color_1_callback' ), // callback
-			'panic-button-settings-admin', // page
-			'panic_button_settings_style_section' // section
+			'panic-button-style-admin', // page
+			'panic_button_configuration_style_section' // section
 		);
 		
 		add_settings_field(
 			'standard_button_bg_1', // id
 			'Panic Button background color', // title
 			array( $this, 'standard_button_bg_1_callback' ), // callback
-			'panic-button-settings-admin', // page
-			'panic_button_settings_style_section' // section
+			'panic-button-style-admin', // page
+			'panic_button_configuration_style_section' // section
 		);
 		
 		add_settings_field(
 			'standard_button_bg_hover_1', // id
 			'Panic Button background hover color', // title
 			array( $this, 'standard_button_bg_hover_1_callback' ), // callback
-			'panic-button-settings-admin', // page
-			'panic_button_settings_style_section' // section
+			'panic-button-style-admin', // page
+			'panic_button_configuration_style_section' // section
 		);
 	}
 	
 	
-	public function panic_button_settings_create_admin_page() {
-		$this->panic_button_settings_options = get_option( 'panic_button_settings_option_name' );
-?>
+	public function panic_button_configuration_create_admin_page() {
+		// check user capabilities
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		//Get the active tab from the $_GET param
+		$default_tab = null;
+		$tab = isset($_GET['tab']) ? $_GET['tab'] : $default_tab;
+
+		?>
+		<!-- Admin page content must be contained inside .wrap -->
 
 		<div class="wrap">
-			<img src="<?php echo $this->_plugin_url.'/img/logo-512.png'; ?>" class="plugin-thumbnail" />
-			<form method="post" action="options.php" id="panic-button-form">
-				<?php
-					settings_fields( 'panic_button_settings_option_group' );
-					do_settings_sections( 'panic-button-settings-admin' );
-					wp_enqueue_media();
-					submit_button();
-				?>
-			</form>
+			<div class="wrapped-column">
+				<img src="<?php echo $this->_plugin_url.'/img/logo-512.png'; ?>" class="plugin-thumbnail" />
+			</div>
+			<div class="wrapped-column">
+			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+				<p>
+				Thank you for choosing Panic Button to protect discretion for victims visiting your website.
+				</p>
+				<p>
+				This plugin offers a layer of protection and annonimity for users of Domestic Violence (DV) and Sexual Violence (SV) websites.
+				</p>
+			</div>
+			<div class="left-tabs">
+			<nav class="nav-tab-wrapper">
+				<a href="?page=panic-button-configuration" class="nav-tab <?php if( $tab === null ):?>nav-tab-active<?php endif; ?>">Main</a>
+				<a href="?page=panic-button-configuration&tab=settings" class="nav-tab <?php if( $tab === 'settings' ):?>nav-tab-active<?php endif; ?>">Settings</a>
+				<a href="?page=panic-button-configuration&tab=style" class="nav-tab <?php if( $tab === 'style' ):?>nav-tab-active<?php endif; ?>">Styling</a>
+			</nav>
+
+			<div class="tab-content">
+			<?php switch( $tab ) :
+			default:
+				$this->main_tab();
+				break;
+			case 'settings':
+				$this->settings_tab();
+				break;
+			case 'style':
+				$this->styling_tab();
+				break;
+			endswitch; ?>
+			</div>
+		</div>
 		</div>
 	<?php 
 	}
 	
+	private function main_tab() {
+	?>
+		<div class="wrap">
+			
+		</div>
+	<?php
+	}
 
-	
-	public function panic_button_settings_functionality_info() {
+	private function styling_tab() {
+	?>
+		<div class="wrap">
+			<form method="post" action="options.php" id="panic-button-form">
+				<?php
+					settings_fields( 'panic_button_style_option_group' );
+					do_settings_sections( 'panic-button-style-admin' );
+					submit_button();
+				?>
+			</form>
+		</div>
+	<?php
+	}
+
+	private function settings_tab() {
+	?>
+		<div class="wrap">
+			<form method="post" action="options.php" id="panic-button-form">
+				<?php
+					settings_fields( 'panic_button_configuration_option_group' );
+					do_settings_sections( 'panic-button-configuration-admin' );
+					submit_button();
+				?>
+			</form>
+		</div>
+	<?php
+		}
+
+	public function panic_button_configuration_functionality_info() {
 		echo '<span class="subheading">Settings that will affect behavior.</span>';
 	}
 	
-	public function panic_button_settings_style_info() {
+	public function panic_button_configuration_style_info() {
 		echo '<span class="subheading">Settings that will affect style.</span>';
 	}
 	
 	
-	public function panic_button_settings_sanitize($input) {
+	public function panic_button_configuration_sanitize($input) {
 		$sanitary_values = array();
 		if ( isset( $input['escape_method'] ) ) {
 			$sanitary_values['escape_method'] = $input['escape_method'];
 		}
 
-		if ( isset( $input['display_modal_on_page_2'] ) ) {
-			$sanitary_values['display_modal_on_page_2'] = $input['display_modal_on_page_2'];
+		if ( isset( $input['display_instructions'] ) ) {
+			$sanitary_values['display_instructions'] = $input['display_instructions'];
 		}
 
 		if ( isset( $input['instructions_3'] ) ) {
@@ -253,73 +339,82 @@ class Panic_Button_Admin {
 		return $sanitary_values;
 	}
 	
-	public function escape_method_callback() { ?>
+	public function escape_method_callback() {
+	?>
 
-		<select id="escape_method" name="panic_button_settings_option_name[escape_method]">
-			<?php $selected = (isset( $this->panic_button_settings_options['escape_method'] ) && $this->panic_button_settings_options['escape_method'] === 'all') ? 'selected' : '' ; ?>
+		<select id="escape_method" name="panic_button_configuration_option_name[escape_method]">
+			<?php $selected = (isset( $this->panic_button_configuration_options['escape_method'] ) && $this->panic_button_configuration_options['escape_method'] === 'all') ? 'selected' : 'all' ; ?>
 			<option <?php echo $selected; ?> value="all">All Escape Methods</option>
-			<?php $selected = (isset( $this->panic_button_settings_options['escape_method'] ) && $this->panic_button_settings_options['escape_method'] === 'keyboard') ? 'selected' : '' ; ?>
+			<?php $selected = (isset( $this->panic_button_configuration_options['escape_method'] ) && $this->panic_button_configuration_options['escape_method'] === 'keyboard') ? 'selected' : '' ; ?>
 			<option <?php echo $selected; ?> value="keyboard">Keyboard Only</option>
-			<?php $selected = (isset( $this->panic_button_settings_options['escape_method'] ) && $this->panic_button_settings_options['escape_method'] === 'button') ? 'selected' : '' ; ?>
+			<?php $selected = (isset( $this->panic_button_configuration_options['escape_method'] ) && $this->panic_button_configuration_options['escape_method'] === 'button') ? 'selected' : '' ; ?>
 			<option <?php echo $selected; ?> value="button">Button Only</option>
 		</select>		
 	
 	<?php
 	}
 
-	public function display_modal_on_page_2_callback() {
-		printf(
-			'<input type="checkbox" name="panic_button_settings_option_name[display_modal_on_page_2]" id="display_modal_on_page_2" value="display_modal_on_page_2">',
-			( isset( $this->panic_button_settings_options['display_modal_on_page_2'] ) && $this->panic_button_settings_options['display_modal_on_page_2'] === 'display_modal_on_page_2' ) ? 'checked' : ''
-		);
+	public function display_instructions_callback() {
+	?>
+		
+		<select id="display_instructions" name="panic_button_configuration_option_name[display_instructions]">
+			<?php $selected = (isset( $this->panic_button_configuration_options['display_instructions'] ) && $this->panic_button_configuration_options['display_instructions'] === 'alert') ? 'selected' : '' ; ?>
+			<option <?php echo $selected; ?> value="alert">Browser Alert</option>
+			<?php $selected = (isset( $this->panic_button_configuration_options['display_instructions'] ) && $this->panic_button_configuration_options['display_instructions'] === 'modal') ? 'selected' : '' ; ?>
+			<option <?php echo $selected; ?> value="modal">Modal</option>
+		</select>
+
+	<?php
 	}
 
 	public function instructions_3_callback() {
-		printf(
-			'<textarea class="regular-text" rows="5" name="panic_button_settings_option_name[instructions_3]" id="instructions_3">%s</textarea>',
-			isset( $this->panic_button_settings_options['instructions_3'] ) ? esc_attr( $this->panic_button_settings_options['instructions_3']) : ''
-		);
+	?>
+		
+		<textarea class="regular-text" rows="5" name="panic_button_configuration_option_name[instructions_3]" id="instructions_3">Instructions to users on how to use either as a button, the keyboard, or both.</textarea>
+
+	<?php
+			isset( $this->panic_button_configuration_options['instructions_3'] ) ? esc_attr( $this->panic_button_configuration_options['instructions_3']) : '';
 	}
 
 	public function time_out_5_callback() {
-		printf(
-			'<input class="regular-text" type="range" min="0" max="2000" name="panic_button_settings_option_name[time_out_5]" id="time_out_5" value="500" oninput="range_weight_disp.value = time_out_5.value"><output  id="range_weight_disp"></output>',
-			isset( $this->panic_button_settings_options['time_out_5'] ) ? esc_attr( $this->panic_button_settings_options['time_out_5']) : ''
-		);
+	?>
+		<input class="regular-text" type="range" min="0" max="2000" name="panic_button_configuration_option_name[time_out_5]" id="time_out_5" value="<?php echo get_option('time_out_5', 500); ?>" oninput="range_weight_disp.value = time_out_5.value"><output id="range_weight_disp"></output>
+
+	<?php
 	}
 
 	public function address_bar_replacement_url_6_callback() {
 		printf(
-			'<input class="regular-text" type="text" name="panic_button_settings_option_name[address_bar_replacement_url_6]" id="address_bar_replacement_url_6" value="%s">',
-			isset( $this->panic_button_settings_options['address_bar_replacement_url_6'] ) ? esc_attr( $this->panic_button_settings_options['address_bar_replacement_url_6']) : ''
+			'<input class="regular-text" type="text" name="panic_button_configuration_option_name[address_bar_replacement_url_6]" id="address_bar_replacement_url_6" value="%s">',
+			isset( $this->panic_button_configuration_options['address_bar_replacement_url_6'] ) ? esc_attr( $this->panic_button_configuration_options['address_bar_replacement_url_6']) : ''
 		);
 	}
 	
 	public function modal_image_1_callback() {		
 		printf(
-		'<img src="%s" id="image-preview" name="'.$this->panic_button_settings_options["modal_image_1"].'"><br>
-			<input id="upload_image_button" type="button" class="button" value="Upload Image" />',isset( $this->panic_button_settings_options['modal_image_1'] ) ? esc_attr( $this->panic_button_settings_options['modal_image_1']) : $this->_plugin_url.'/img/panic-button.gif'
+		'<img src="%s" id="image-preview" name="panic_button_configuration_option_name[modal_image_1]"><br>
+			<input id="upload_image_button" type="button" class="button" value="Upload Image" />',isset( $this->panic_button_configuration_options['modal_image_1'] ) ? esc_attr( $this->panic_button_configuration_options['modal_image_1']) : $this->_plugin_url.'/img/panic-button.gif'
 			);
 		echo '<input id="clear_image_button" type="button" class="button" value="Reset Image" />';
 		printf(
-		'<input class="regular-text" type="hidden" name="panic_button_settings_option_name[modal_image_1]" id="modal_image_1" value="%s">',
-			isset( $this->panic_button_settings_options['modal_image_1'] ) ? esc_attr( $this->panic_button_settings_options['modal_image_1']) : $this->_plugin_url.'/img/panic-button.gif'
+		'<input class="regular-text" type="hidden" name="panic_button_configuration_option_name[modal_image_1]" id="modal_image_1" value="%s">',
+			isset( $this->panic_button_configuration_options['modal_image_1'] ) ? esc_attr( $this->panic_button_configuration_options['modal_image_1']) : $this->_plugin_url.'/img/panic-button.gif'
 			);
 	
 	}
 
 	public function media_selector_print_scripts() {
 
-	$my_saved_attachment_post_id = get_option( 'modal_image_1', 0 );
-		
-		?><script type='text/javascript'>
+		$my_saved_attachment_post_id = get_option( 'modal_image_1', 0 );
+		?>
+		<script type='text/javascript'>
 
 		jQuery( document ).ready( function( $ ) {
 
 			// Uploading files
 			var file_frame;
 			var wp_media_post_id = wp.media.model.settings.post.id; // Store the old id
-			var set_to_post_id = <?php echo $my_saved_attachment_post_id ?>; // Set this
+			var set_to_post_id = <?php echo $my_saved_attachment_post_id; ?>; // Set this
 
 			jQuery('#upload_image_button').on('click', function( event ){
 
@@ -339,7 +434,7 @@ class Panic_Button_Admin {
 
 				// Create the media frame.
 				file_frame = wp.media.frames.file_frame = wp.media({
-					title: 'Select a image to upload',
+					title: 'Select an image to upload',
 					button: {
 						text: 'Use this image',
 					},
@@ -374,48 +469,48 @@ class Panic_Button_Admin {
 			});
 		});
 
-	</script><?php
-
-}
+		</script>
+		<?php
+	}
 
 	public function button_position_8_callback() {
-		?> <select name="panic_button_settings_option_name[button_position_8]" id="button_position_8">
-			<?php $selected = (isset( $this->panic_button_settings_options['button_position_8'] ) && $this->panic_button_settings_options['button_position_8'] === 'Top') ? 'selected' : '' ; ?>
-			<option <?php echo $selected; ?>>Top</option>
-			<?php $selected = (isset( $this->panic_button_settings_options['button_position_8'] ) && $this->panic_button_settings_options['button_position_8'] === 'Bottom') ? 'selected' : '' ; ?>
-			<option <?php echo $selected; ?>>Bottom</option>
-			<?php $selected = (isset( $this->panic_button_settings_options['button_position_8'] ) && $this->panic_button_settings_options['button_position_8'] === 'Left') ? 'selected' : '' ; ?>
-			<option <?php echo $selected; ?>>Left</option>
-			<?php $selected = (isset( $this->panic_button_settings_options['button_position_8'] ) && $this->panic_button_settings_options['button_position_8'] === 'Right') ? 'selected' : '' ; ?>
-			<option <?php echo $selected; ?>>Right</option>
+		?> <select name="panic_button_configuration_option_name[button_position_8]" id="button_position_8">
+			<?php $selected = (isset( $this->panic_button_configuration_options['button_position_8'] ) && $this->panic_button_configuration_options['button_position_8'] === 'top') ? 'selected' : '' ; ?>
+			<option <?php echo $selected; ?> value = "top">Top</option>
+			<?php $selected = (isset( $this->panic_button_configuration_options['button_position_8'] ) && $this->panic_button_configuration_options['button_position_8'] === 'bottom') ? 'selected' : '' ; ?>
+			<option <?php echo $selected; ?> value = "bottom">Bottom</option>
+			<?php $selected = (isset( $this->panic_button_configuration_options['button_position_8'] ) && $this->panic_button_configuration_options['button_position_8'] === 'left') ? 'selected' : '' ; ?>
+			<option <?php echo $selected; ?> value = "left">Left</option>
+			<?php $selected = (isset( $this->panic_button_configuration_options['button_position_8'] ) && $this->panic_button_configuration_options['button_position_8'] === 'right') ? 'selected' : '' ; ?>
+			<option <?php echo $selected; ?> value = "right">Right</option>
 		</select> <?php
 	}
 	
 	public function standard_button_text_1_callback() {
 		printf(
-			'<input class="regular-text" type="text" name="panic_button_settings_option_name[standard_button_text_1]" id="standard_button_text_1" value="%s">',
-			isset( $this->panic_button_settings_options['standard_button_text_1'] ) ? esc_attr( $this->panic_button_settings_options['standard_button_text_1']) : ''
+			'<input class="regular-text" type="text" name="panic_button_configuration_option_name[standard_button_text_1]" id="standard_button_text_1" value="%s">',
+			isset( $this->panic_button_configuration_options['standard_button_text_1'] ) ? esc_attr( $this->panic_button_configuration_options['standard_button_text_1']) : ''
 		);
 	}
 	
 	public function standard_button_text_color_1_callback() {
 		printf(
-			'<input type="text" class="color-picker" name="panic_button_settings_option_name[standard_button_text_color_1]" id="standard_button_text_color_1" value="%s" data-alpha="true"/>',
-			isset( $this->panic_button_settings_options['standard_button_text_color_1'] ) ? esc_attr( $this->panic_button_settings_options['standard_button_text_color_1']) : ''
+			'<input type="text" class="color-picker" name="panic_button_configuration_option_name[standard_button_text_color_1]" id="standard_button_text_color_1" value="%s" data-alpha="true"/>',
+			isset( $this->panic_button_configuration_options['standard_button_text_color_1'] ) ? esc_attr( $this->panic_button_configuration_options['standard_button_text_color_1']) : ''
 		);
 	}
 	
 	public function standard_button_bg_1_callback() {
 		printf(
-			'<input type="text" class="color-picker" name="panic_button_settings_option_name[standard_button_bg_1]" id="standard_button_bg_1" value="%s" data-alpha="true"/>',
-			isset( $this->panic_button_settings_options['standard_button_bg_1'] ) ? esc_attr( $this->panic_button_settings_options['standard_button_bg_1']) : ''
+			'<input type="text" class="color-picker" name="panic_button_configuration_option_name[standard_button_bg_1]" id="standard_button_bg_1" value="%s" data-alpha="true"/>',
+			isset( $this->panic_button_configuration_options['standard_button_bg_1'] ) ? esc_attr( $this->panic_button_configuration_options['standard_button_bg_1']) : ''
 		);
 	}
 	
 	public function standard_button_bg_hover_1_callback() {
 		printf(
-			'<input type="text" class="color-picker" name="panic_button_settings_option_name[standard_button_bg_hover_1]" id="standard_button_bg_hover_1" value="%s" data-alpha="true"/>',
-			isset( $this->panic_button_settings_options['standard_button_bg_hover_1'] ) ? esc_attr( $this->panic_button_settings_options['standard_button_bg_hover_1']) : ''
+			'<input type="text" class="color-picker" name="panic_button_configuration_option_name[standard_button_bg_hover_1]" id="standard_button_bg_hover_1" value="%s" data-alpha="true"/>',
+			isset( $this->panic_button_configuration_options['standard_button_bg_hover_1'] ) ? esc_attr( $this->panic_button_configuration_options['standard_button_bg_hover_1']) : ''
 		);
 	}
 	
@@ -464,7 +559,7 @@ class Panic_Button_Admin {
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
-
+		wp_enqueue_media();
 		wp_enqueue_script( $this->panic_button, plugin_dir_url( __FILE__ ) . 'js/panic-button-admin.js', array( 'jquery' ), $this->version, false );
 		
 		// Hostwel

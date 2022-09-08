@@ -3,22 +3,13 @@
 /**
  * The public-facing functionality of the plugin.
  *
- * @link       http://example.com
- * @since      1.0.0
- *
- * @package    Panic_Button
- * @subpackage Panic_Button/public
- */
-
-/**
- * The public-facing functionality of the plugin.
- *
  * Defines the plugin name, version, and two examples hooks for how to
  * enqueue the public-facing stylesheet and JavaScript.
  *
+ * @link       https://nkdcon.com
  * @package    Panic_Button
  * @subpackage Panic_Button/public
- * @author     Ronnie Stamps <ronnie@hostwel.net>
+ * @author     Ronnie Stamps <ronnie@nkcon.com>
  */
 class Panic_Button_Public {
 	
@@ -40,36 +31,6 @@ class Panic_Button_Public {
 	 */
 	private $version;
 
-    /**
-	 * Panic Button head settings.
-	 *
-	 * @since    1.0.0
-	 * @access   protected
-	 * 
-	 */
-    protected $panic_button_settings_options;
-    protected $escape_method;
-    protected $pos;
-    protected $time;
-    protected $add_url;
-    protected $bar_text_color;
-    protected $bar_bg_hover;
-
-    
-    /**
-	 * Panic Button footer settings.
-	 *
-	 * @since    1.0.0
-	 * @access   protected
-	 * 
-	 */
-    protected $instructions;
-    protected $modal;
-    protected $image;
-    protected $bar_bg;
-    protected $bar_text;
-
-
 	/**
 	 * Initialize the class and set its properties.
 	 *
@@ -83,12 +44,13 @@ class Panic_Button_Public {
 
 		$this->panic_button = $panic_button;
 		$this->version = $version;
-		
-		// Hostwel
-		$this->panic_button_settings_options = get_option( 'panic_button_settings_option_name' );
-        add_action( 'wp_head', array($this,'panic_head_tag'));
-		add_action( 'wp_footer', array($this,'panic_footer'));
-        add_action('wp_footer', array($this,'cover_tracks'));
+
+        // Array of All Options
+		$this->panic_button_configuration_options = get_option( 'panic_button_configuration_option_name' );
+        
+		add_action( 'wp_footer', array( $this,'panic_footer' ) );
+        add_action( 'wp_footer', array( $this,'cover_tracks' ) );
+        add_action( 'wp_footer', array( $this,'panic_head_tag' ) );
 
 	}
 
@@ -99,21 +61,7 @@ class Panic_Button_Public {
 	 */
 	public function enqueue_styles() {
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Panic_Button_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Panic_Button_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
 		wp_enqueue_style( $this->panic_button, plugin_dir_url( __FILE__ ) . 'css/panic-button-public.css', array(), $this->version, 'all' );
-		
-		// Hostwel
 		wp_enqueue_style( 'panic_popup_css', plugin_dir_url( __FILE__ ).'/css/magnific-popup.css' );
         wp_enqueue_style( $this->panic_button, plugin_dir_url( __FILE__ ) . 'panic_popup_css' );
 
@@ -126,26 +74,23 @@ class Panic_Button_Public {
 	 */
 	public function enqueue_scripts() {
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Panic_Button_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Panic_Button_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
+    /**
+     * This function is provided for demonstration purposes only.
+     *
+     * An instance of this class should be passed to the run() function
+     * defined in Panic_Button_Loader as all of the hooks are defined
+     * in that particular class.
+     *
+     * The Panic_Button_Loader will then create the relationship
+     * between the defined hooks and the functions defined in this
+     * class.
+     */
 
-		wp_enqueue_script( $this->panic_button, plugin_dir_url( __FILE__ ) . 'js/panic-button-public.js', array( 'jquery' ), $this->version, false );
-		
-		// Hostwel
-		wp_enqueue_script( 'panic_popup', plugin_dir_url( __FILE__ ) . '/js/jquery.magnific-popup.min.js', array( 'jquery' ), '1.0', false,null );
-        wp_enqueue_script( $this->panic_button, plugin_dir_url( __FILE__ ) . '/js/jquery.magnific-popup.min.js');
+    wp_enqueue_script( $this->panic_button, plugin_dir_url( __FILE__ ) . 'js/panic-button-public.js', array( 'jquery' ), $this->version, false );
+    wp_enqueue_script( 'panic_popup', plugin_dir_url( __FILE__ ) . '/js/jquery.magnific-popup.min.js', array( 'jquery' ), '1.0', false,null );
+    wp_enqueue_script( $this->panic_button, plugin_dir_url( __FILE__ ) . '/js/jquery.magnific-popup.min.js');
 
 	}
-	
 
     /**
 	 * Converts all links to use Javascript replace() so that links 
@@ -171,18 +116,13 @@ class Panic_Button_Public {
 
 	public function panic_head_tag() {
 		
-        $escape_method = $this->panic_button_settings_options['escape_method'];
-        $pos = $this->panic_button_settings_options['button_position_8'];
-        $time = $this->panic_button_settings_options['time_out_5'];
-        $add_url = $this->panic_button_settings_options['address_bar_replacement_url_6'];
-		$bar_bg = $this->panic_button_settings_options['standard_button_bg_1'];
-		$bar_text = $this->panic_button_settings_options['standard_button_text_1'];
-		$bar_text_color = $this->panic_button_settings_options['standard_button_text_color_1'];
-		$bar_bg_hover = $this->panic_button_settings_options['standard_button_bg_hover_1'];
-		
-        if (strpos($add_url,'http://') === false){
-            $add_url = 'http://'.$add_url;
-        }
+        $escape_method = $this->panic_button_configuration_options['escape_method'];
+        $pos = $this->panic_button_configuration_options['button_position_8'];
+        $time = $this->panic_button_configuration_options['time_out_5'];
+        $add_url = $this->panic_button_configuration_options['address_bar_replacement_url_6'];
+		$bar_bg = $this->panic_button_configuration_options['standard_button_bg_1'];
+		$bar_text_color = $this->panic_button_configuration_options['standard_button_text_color_1'];
+		$bar_bg_hover = $this->panic_button_configuration_options['standard_button_bg_hover_1'];
 
         ?>
             <script>
@@ -217,7 +157,7 @@ class Panic_Button_Public {
             <?php
         }
 
-        if($pos == 'Bottom')  
+        if($pos == 'bottom')  
         {
             ?>
             <style>
@@ -239,17 +179,15 @@ class Panic_Button_Public {
                 cursor: cell;
             }
 
-            #panicLeft {
-                float: left;
+            #panicText {
+                text-align: center;
             }
-            #panicRight {
-                float: right;
-            }
+
             </style>
         <?php
         }
 
-        if($pos == 'Top')  
+        if($pos == 'top')  
         {
             ?>
             <style>
@@ -257,7 +195,7 @@ class Panic_Button_Public {
                 width: 100%;
                 height: 100px;
                 position: fixed;
-                bottom: 0;
+                top: 0;
                 z-index: 9999;
                 background: <?php echo $bar_bg; ?>;
                 color: <?php echo $bar_text_color; ?>;
@@ -271,25 +209,22 @@ class Panic_Button_Public {
                 cursor: cell;
             }
 
-            #panicLeft {
-                float: left;
-            }
-            #panicRight {
-                float: right;
+            #panicText {
+                text-align: center;
             }
             </style>
         <?php
         }
 
-        if($pos == 'Right')  
+        if($pos == 'right')  
         {
             ?>
             <style>
             #panic {
-                width: 100%;
-                height: 100px;
+                width: 100px;
+                height: 100vh;
                 position: fixed;
-                bottom: 0;
+                right: 0;
                 z-index: 9999;
                 background: <?php echo $bar_bg; ?>;
                 color: <?php echo $bar_text_color; ?>;
@@ -303,25 +238,22 @@ class Panic_Button_Public {
                 cursor: cell;
             }
 
-            #panicLeft {
-                float: left;
-            }
-            #panicRight {
-                float: right;
+            #panicText {
+                text-align: center;
             }
             </style>
         <?php
         }
 
-        if($pos == 'Left')  
+        if($pos == 'left')  
         {
             ?>
             <style>
             #panic {
-                width: 100%;
-                height: 100px;
+                width: 100px;
+                height: 100vh;
                 position: fixed;
-                bottom: 0;
+                left: 0;
                 z-index: 9999;
                 background: <?php echo $bar_bg; ?>;
                 color: <?php echo $bar_text_color; ?>;
@@ -335,11 +267,8 @@ class Panic_Button_Public {
                 cursor: cell;
             }
 
-            #panicLeft {
-                float: left;
-            }
-            #panicRight {
-                float: right;
+            #panicText {
+                text-align: center;
             }
             </style>
         <?php
@@ -348,28 +277,25 @@ class Panic_Button_Public {
 
 	public function panic_footer() {
 
-        $escape_method = $this->panic_button_settings_options['escape_method'];      
-		$instructions = $this->panic_button_settings_options['instructions_3'];        
-		$modal = $this->panic_button_settings_options['display_modal_on_page_2'];        
-		$image = $this->panic_button_settings_options['modal_image_1'] != '' ? $this->panic_button_settings_options['modal_image_1'] : plugin_dir_url( __FILE__ ).'img/panic-button.gif';		
-		$bar_bg = $this->panic_button_settings_options['standard_button_bg_1'];		
-		$bar_text = $this->panic_button_settings_options['standard_button_text_1'];
-		$bar_text_color = $this->panic_button_settings_options['standard_button_text_color_1'];
-		$bar_bg_hover = $this->panic_button_settings_options['standard_button_bg_hover_1'];
+        $escape_method = $this->panic_button_configuration_options['escape_method'];      
+		$instructions = $this->panic_button_configuration_options['instructions_3'];        
+		$modal = $this->panic_button_configuration_options['display_instructions'];        
+		$image = $this->panic_button_configuration_options['modal_image_1'];			
+		$bar_text = $this->panic_button_configuration_options['standard_button_text_1'];
 
         if(isset($escape_method) && ($escape_method == "button" || $escape_method == "all"))
         {
-            echo '<div id="panic" onclick="navigate();"><div id="panicLeft">'.$bar_text.'</div><div id="panicRight">'.$bar_text.'</div></div>';
+            echo '<div id="panic" onclick="navigate();"><div id="panicText">'.$bar_text.'</div></div>';
         } 
 
-        if(isset($modal))  
-        {  
+        if(isset($modal) && $modal == "modal" && $_SESSION["modal"] != 1)  
+        {
             ?>
-            <a class="popup" href="#follow-form">Click</a>
+            <!-- <a class="popup" href="#follow-form">Click</a> Not sure why I did this. -->
             <div id="follow-form" class="white-popup-block mfp-hide" style="background: #FFF;padding: 20px 30px;text-align: left;max-width: 650px;margin: 40px auto;overflow:hidden">
-                <?php print $instructions ; ?>
+                <?php echo $instructions ; ?>
                 <div>
-                    <img src="<?php print $image ?>" />
+                    <img src="<?php echo $image ?>" />
                 </div>
                 <div>
                     <button id="ack">Got It!</button>
@@ -397,6 +323,7 @@ class Panic_Button_Public {
             });
             </script>
             <?php
+            $_SESSION["modal"] = 1;
         }
     }
 }

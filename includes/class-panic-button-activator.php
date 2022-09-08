@@ -3,7 +3,7 @@
 /**
  * Fired during plugin activation
  *
- * @link       http://example.com
+ * @link       https://nkdcon.com
  * @since      1.0.0
  *
  * @package    Panic_Button
@@ -18,14 +18,13 @@
  * @since      1.0.0
  * @package    Panic_Button
  * @subpackage Panic_Button/includes
- * @author     Ronnie Stamps <ronnie@hostwel.net>
+ * @author     Ronnie Stamps <ronnie@nkdcon.com>
  */
 class Panic_Button_Activator {
 
 	/**
-	 * Short Description. (use period)
+	 * Set and initialize all of the plugin options.
 	 *
-	 * Long Description.
 	 *
 	 * @since    1.0.0
 	 */

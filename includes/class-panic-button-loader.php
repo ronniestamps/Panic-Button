@@ -3,7 +3,7 @@
 /**
  * Register all actions and filters for the plugin
  *
- * @link       http://example.com
+ * @link       https://nkdcon.com
  * @since      1.0.0
  *
  * @package    Panic_Button
@@ -19,7 +19,7 @@
  *
  * @package    Panic_Button
  * @subpackage Panic_Button/includes
- * @author     Ronnie Stamps <ronnie@hostwel.net>
+ * @author     Ronnie Stamps <ronnie@nkdcon.com>
  */
 class Panic_Button_Loader {
 

@@ -6,7 +6,7 @@
  * A class definition that includes attributes and functions used across both the
  * public-facing side of the site and the admin area.
  *
- * @link       http://example.com
+ * @link       https://nkdcon.com/plugins/panic-button
  * @since      1.0.0
  *
  * @package    Panic_Button
@@ -25,7 +25,7 @@
  * @since      1.0.0
  * @package    Panic_Button
  * @subpackage Panic_Button/includes
- * @author     Ronnie Stamps <ronnie@hostwel.net>
+ * @author     Ronnie Stamps <ronnie@nkdcon.com>
  */
 class Panic_Button {
 
