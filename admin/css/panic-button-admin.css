@@ -3,7 +3,7 @@
 */
 
 .regular-text {
-    width: 40% !important;
+	width: 40% !important;
 }
 
 .plugin-thumbnail {
@@ -11,8 +11,8 @@
 }
 
 .subtext {
-    font-weight: normal;
-    font-size: smaller;
+	font-weight: normal;
+	font-size: smaller;
 }
 
 .subheading {
@@ -20,6 +20,10 @@
 }
 
 #panic-button-form h2 {
-    margin-bottom: 10px;
+	margin-bottom: 10px;
 	font-size: 2em;
+}
+
+.naked-logo img {
+	width: 140px;
 }

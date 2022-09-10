@@ -6,7 +6,7 @@
  * A class definition that includes attributes and functions used across both the
  * public-facing side of the site and the admin area.
  *
- * @link       https://nkdcon.com/plugins/panic-button
+ * @link       https://naked-spectrum.com/plugins/panic-button
  * @since      1.0.0
  *
  * @package    Panic_Button
@@ -25,9 +25,10 @@
  * @since      1.0.0
  * @package    Panic_Button
  * @subpackage Panic_Button/includes
- * @author     Ronnie Stamps <ronnie@nkdcon.com>
+ * @author     Ronnie Stamps <ronnie@naked-spectrum.com>
  */
-class Panic_Button {
+class Panic_Button
+{
 
 	/**
 	 * The loader that's responsible for maintaining and registering all hooks that power
@@ -66,8 +67,9 @@ class Panic_Button {
 	 *
 	 * @since    1.0.0
 	 */
-	public function __construct() {
-		if ( defined( 'PANIC_BUTTON_VERSION' ) ) {
+	public function __construct()
+	{
+		if (defined('PANIC_BUTTON_VERSION')) {
 			$this->version = PANIC_BUTTON_VERSION;
 		} else {
 			$this->version = '1.0.0';
@@ -78,7 +80,6 @@ class Panic_Button {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
-
 	}
 
 	/**
@@ -97,33 +98,33 @@ class Panic_Button {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function load_dependencies() {
+	private function load_dependencies()
+	{
 
 		/**
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-panic-button-loader.php';
+		require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-panic-button-loader.php';
 
 		/**
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-panic-button-i18n.php';
+		require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-panic-button-i18n.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-panic-button-admin.php';
+		require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-panic-button-admin.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-panic-button-public.php';
+		require_once plugin_dir_path(dirname(__FILE__)) . 'public/class-panic-button-public.php';
 
 		$this->loader = new Panic_Button_Loader();
-
 	}
 
 	/**
@@ -135,12 +136,12 @@ class Panic_Button {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function set_locale() {
+	private function set_locale()
+	{
 
 		$plugin_i18n = new Panic_Button_i18n();
 
-		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
-
+		$this->loader->add_action('plugins_loaded', $plugin_i18n, 'load_plugin_textdomain');
 	}
 
 	/**
@@ -150,14 +151,15 @@ class Panic_Button {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function define_admin_hooks() {
-		
-		//if ( is_admin() )
-		$plugin_admin = new Panic_Button_Admin( $this->get_panic_button(), $this->get_version() );
+	private function define_admin_hooks()
+	{
 
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'color_picker' ); 
+		//if ( is_admin() )
+		$plugin_admin = new Panic_Button_Admin($this->get_panic_button(), $this->get_version());
+
+		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
+		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
+		$this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'color_picker');
 	}
 
 	/**
@@ -167,13 +169,13 @@ class Panic_Button {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function define_public_hooks() {
+	private function define_public_hooks()
+	{
 
-		$plugin_public = new Panic_Button_Public( $this->get_panic_button(), $this->get_version() );
+		$plugin_public = new Panic_Button_Public($this->get_panic_button(), $this->get_version());
 
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-
+		$this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_styles');
+		$this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_scripts');
 	}
 
 	/**
@@ -181,7 +183,8 @@ class Panic_Button {
 	 *
 	 * @since    1.0.0
 	 */
-	public function run() {
+	public function run()
+	{
 		$this->loader->run();
 	}
 
@@ -192,7 +195,8 @@ class Panic_Button {
 	 * @since     1.0.0
 	 * @return    string    The name of the plugin.
 	 */
-	public function get_panic_button() {
+	public function get_panic_button()
+	{
 		return $this->panic_button;
 	}
 
@@ -202,7 +206,8 @@ class Panic_Button {
 	 * @since     1.0.0
 	 * @return    Panic_Button_Loader    Orchestrates the hooks of the plugin.
 	 */
-	public function get_loader() {
+	public function get_loader()
+	{
 		return $this->loader;
 	}
 
@@ -212,8 +217,8 @@ class Panic_Button {
 	 * @since     1.0.0
 	 * @return    string    The version number of the plugin.
 	 */
-	public function get_version() {
+	public function get_version()
+	{
 		return $this->version;
 	}
-
 }

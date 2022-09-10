@@ -6,7 +6,7 @@
  * Loads and defines the internationalization files for this plugin
  * so that it is ready for translation.
  *
- * @link       http://example.com
+ * @link       https://naked-spectrum.com
  * @since      1.0.0
  *
  * @package    Panic_Button
@@ -24,7 +24,8 @@
  * @subpackage Panic_Button/includes
  * @author     Ronnie Stamps <ronnie@hostwel.net>
  */
-class Panic_Button_i18n {
+class Panic_Button_i18n
+{
 
 
 	/**
@@ -32,16 +33,13 @@ class Panic_Button_i18n {
 	 *
 	 * @since    1.0.0
 	 */
-	public function load_plugin_textdomain() {
+	public function load_plugin_textdomain()
+	{
 
 		load_plugin_textdomain(
 			'panic-button',
 			false,
-			dirname( dirname( plugin_basename( __FILE__ ) ) ) . '/languages/'
+			dirname(dirname(plugin_basename(__FILE__))) . '/languages/'
 		);
-
 	}
-
-
-
 }

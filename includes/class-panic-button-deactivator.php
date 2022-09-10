@@ -3,7 +3,7 @@
 /**
  * Fired during plugin deactivation
  *
- * @link       http://example.com
+ * @link       https://naked-spectrum.com
  * @since      1.0.0
  *
  * @package    Panic_Button
@@ -20,7 +20,8 @@
  * @subpackage Panic_Button/includes
  * @author     Ronnie Stamps <ronnie@hostwel.net>
  */
-class Panic_Button_Deactivator {
+class Panic_Button_Deactivator
+{
 
 	/**
 	 * Short Description. (use period)
@@ -29,8 +30,7 @@ class Panic_Button_Deactivator {
 	 *
 	 * @since    1.0.0
 	 */
-	public static function deactivate() {
-
+	public static function deactivate()
+	{
 	}
-
 }

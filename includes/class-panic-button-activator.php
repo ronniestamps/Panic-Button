@@ -3,7 +3,7 @@
 /**
  * Fired during plugin activation
  *
- * @link       https://nkdcon.com
+ * @link       https://naked-spectrum.com
  * @since      1.0.0
  *
  * @package    Panic_Button
@@ -18,9 +18,10 @@
  * @since      1.0.0
  * @package    Panic_Button
  * @subpackage Panic_Button/includes
- * @author     Ronnie Stamps <ronnie@nkdcon.com>
+ * @author     Ronnie Stamps <ronnie@naked-spectrum.com>
  */
-class Panic_Button_Activator {
+class Panic_Button_Activator
+{
 
 	/**
 	 * Set and initialize all of the plugin options.
@@ -28,8 +29,7 @@ class Panic_Button_Activator {
 	 *
 	 * @since    1.0.0
 	 */
-	public static function activate() {
-
+	public static function activate()
+	{
 	}
-
 }
