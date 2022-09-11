@@ -120,12 +120,12 @@ class Panic_Button_Public
     {
 
         $escape_method = $this->panic_button_configuration_options['escape_method'];
-        $pos = $this->panic_button_configuration_options['button_position_8'];
-        $time = $this->panic_button_configuration_options['time_out_5'];
-        $add_url = $this->panic_button_configuration_options['address_bar_replacement_url_6'];
-        $bar_bg = $this->panic_button_configuration_options['standard_button_bg_1'];
-        $bar_text_color = $this->panic_button_configuration_options['standard_button_text_color_1'];
-        $bar_bg_hover = $this->panic_button_configuration_options['standard_button_bg_hover_1'];
+        $pos = $this->panic_button_configuration_options['button_position'];
+        $time = $this->panic_button_configuration_options['precision'];
+        $add_url = $this->panic_button_configuration_options['exit_url'];
+        $bar_bg = $this->panic_button_configuration_options['button_bg'];
+        $bar_text_color = $this->panic_button_configuration_options['button_text_color'];
+        $bar_bg_hover = $this->panic_button_configuration_options['button_bg_hover'];
 
     ?>
         <script>
@@ -276,10 +276,10 @@ class Panic_Button_Public
     {
 
         $escape_method = $this->panic_button_configuration_options['escape_method'];
-        $instructions = $this->panic_button_configuration_options['instructions_3'];
+        $instructions = $this->panic_button_configuration_options['instructions'];
         $modal = $this->panic_button_configuration_options['display_instructions'];
-        $image = $this->panic_button_configuration_options['modal_image_1'];
-        $bar_text = $this->panic_button_configuration_options['standard_button_text_1'];
+        $image = $this->panic_button_configuration_options['modal_image'];
+        $bar_text = $this->panic_button_configuration_options['button_text'];
 
         if (($escape_method == "button" || $escape_method == "all")) {
             echo '<div id="panic" onclick="navigate();"><div id="panicText">' . $bar_text . '</div></div>';
