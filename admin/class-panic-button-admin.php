@@ -40,6 +40,7 @@ class Panic_Button_Admin
 		$this->_plugin_url = plugin_dir_url(__FILE__);
 
 		add_action('admin_menu', array($this, 'panic_button_configuration_add_plugin_page'));
+		add_filter('plugin_action_links_panic-button/panic-button.php', array($this, 'pb_settings_link'));
 		add_action('admin_init', array($this, 'panic_button_configuration_page_init'));
 		add_action('admin_footer', array($this, 'media_selector_print_scripts'));
 
@@ -74,6 +75,24 @@ class Panic_Button_Admin
 			'panic-button-configuration', // menu_slug
 			array($this, 'panic_button_configuration_create_admin_page') // function
 		);
+	}
+
+	function pb_settings_link($links)
+	{
+		// Build and escape the URL.
+		$url = esc_url(add_query_arg(
+			'page',
+			'panic-button-configuration',
+			get_admin_url() . 'admin.php'
+		));
+		// Create the link.
+		$settings_link = "<a href='$url'>" . __('Settings') . '</a>';
+		// Adds the link to the end of the array.
+		array_push(
+			$links,
+			$settings_link
+		);
+		return $links;
 	}
 
 	public function color_picker()
