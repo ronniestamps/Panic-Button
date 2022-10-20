@@ -289,7 +289,7 @@ class Panic_Button_Admin
 		<div class="wrap">
 			<h1>Many Thanks!</h1>
 			<p>
-				Thank you for choosing Panic Button to protect discretion for victims of domestic and sexual violence visiting your website. This plugin offers a layer of protection and annonimity for users of Domestic Violence (DV) and Sexual Violence (SV) websites.
+				Thank you for choosing Panic Button to protect the privacy for victims of domestic and sexual violence visiting your website. This plugin offers a layer of protection and annonimity for users of Domestic Violence (DV) and Sexual Violence (SV) websites.
 			</p>
 			<div class="naked-logo">
 				<a href="https://naked-spectrum.com" target="_blank">
